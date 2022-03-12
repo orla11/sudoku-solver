@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { CellContent } from '../cell/cell.component';
 
 export interface Size{
   height: number,
@@ -12,8 +13,8 @@ export interface Size{
 })
 export class GridComponent implements OnInit {
 
-  @Input('size') size: number = 9;
-  @Input('section-size') sectionSize: string = '3x3';
+  @Input() size: number = 9;
+  @Input() sectionSize: string = "3x3";
 
   private _size: Size = {
     height: 9,
@@ -22,17 +23,39 @@ export class GridComponent implements OnInit {
   private _sectionSize: Size = {
     height: 3,
     width: 3
-  } 
+  }
 
-  constructor() { 
+  private _matrix : CellContent[][] = [];
+
+  public get matrix(): CellContent[][] {
+    return this._matrix;
+  }
+
+  constructor() { }
+
+  ngOnInit(): void {
     let inputSize = { height: this.size, width: this.size };
     let inputSectionSize = this.convertSectionSize(this.sectionSize);
 
     this._size = this.validateInput(inputSize) ? inputSize : this._size;
     this._sectionSize = this.validateInput(inputSectionSize, this._size) ? inputSectionSize : this._sectionSize;
+    
+    this._matrix = Array(this._size.height)
+      .fill(undefined)
+      .map((row, x) => Array(this._size.width)
+        .fill(undefined)
+        .map( (value, y) => {
+          return {
+            value: value,
+            x: x,
+            y: y
+          } 
+        })
+      );
   }
 
-  ngOnInit(): void {
+  public print(){
+    console.log(this._matrix)
   }
   
   private validateInput(value: Size, container?: Size) : boolean {
@@ -57,15 +80,15 @@ export class GridComponent implements OnInit {
     return result;
   }
 
-  private convertSectionSize(value: string) : Size{
-    if (new RegExp('^\s*[0-9]{1,2}\s*x\s*[0-9]{1,2}\s*$').test(value)){
+  private convertSectionSize(value?: string) : Size{
+    if (value && new RegExp('^\s*[0-9]{1,2}\s*x\s*[0-9]{1,2}\s*$').test(value)){
       let split = value
         .replace(new RegExp('\s'), '')
         .split(new RegExp('[x,X]'));
       
       return {
-        width: Number(split[0]),
-        height: Number(split[1])
+        height: Number(split[0]),
+        width: Number(split[1])
       }
     }
 
