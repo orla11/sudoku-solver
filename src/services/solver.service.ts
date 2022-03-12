@@ -1,20 +1,32 @@
 import { spawn } from "child_process";
+import path from "path";
 
 const solveBoard = async function (board: Number[][]) {
-	// solver.py spawning process
-	const solver = spawn("python", ["./scripts/solver.py"]);
-
-	solver.stderr.on("data", (data) => {
-		console.error("err: ", data.toString());
+	let resolve: Function, reject: Function;
+	let res = new Promise((_resolve, _reject) => {
+		resolve = _resolve;
+		reject = _reject;
 	});
 
-	solver.on("error", (error) => {
+	const solver = spawn("python", [
+		path.join(__dirname, "../scripts/solver.py"),
+	]);
+
+	solver.stdout.on("data", function (data) {
+		console.log("data: ", data.toString());
+		resolve(JSON.parse(data.toString()));
+	});
+
+	solver.stderr.on("error", (error) => {
 		console.error("error: ", error.message);
+		reject(error.message);
 	});
 
 	solver.on("close", (code) => {
-		console.log("child process exited with code ", code);
+		console.log("child solver process exited with code ", code);
 	});
+
+	return res;
 };
 
 export default { solveBoard };
