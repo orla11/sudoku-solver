@@ -1,0 +1,21 @@
+.section-row {
+    width: fit-content !important;
+    margin-bottom: -2px;
+    background: black;
+
+    .section{
+        margin-left: -2px;
+    }
+
+    .section:first-child{
+        margin-left: 0;
+    }
+}
+
+.section-row:first-child {
+    border-radius: 6px 6px 0 0;
+}
+
+.section-row:last-child {
+    border-radius: 0 0 6px 6px;
+}

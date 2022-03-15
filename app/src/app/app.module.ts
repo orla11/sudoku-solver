@@ -9,19 +9,23 @@ import { CellComponent } from './cell/cell.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
+import { SectionComponent } from './section/section.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
     AppComponent,
     GridComponent,
-    CellComponent
+    CellComponent,
+    SectionComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     MatInputModule,
     MatButtonModule,
-    FormsModule
+    FormsModule,
+    NgbModule
   ],
   providers: [],
   bootstrap: [AppComponent]

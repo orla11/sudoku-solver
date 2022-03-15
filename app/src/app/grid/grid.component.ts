@@ -68,8 +68,6 @@ export class GridComponent implements OnInit {
         )
       }
     )
-    
-    console.log(this.cellSections);
   }
 
   private createMatrix(size: Size, map?: (x: number, y: number) => any) : any[][]{
@@ -91,7 +89,6 @@ export class GridComponent implements OnInit {
 
   public print(){
     console.log(this.printMatrix(), this.matrix);
-
     this._sections.forEach( row => row.forEach( section => 
       console.log(this.printMatrix(section))
     ) );

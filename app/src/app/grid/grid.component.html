@@ -1,5 +1,8 @@
-<div *ngFor="let row of cellMatrix">
-    <sudoku-cell *ngFor="let cell of row" [maxValue]="maxValue" [content]="cell"></sudoku-cell>
+
+<div>
+    <div *ngFor="let row of cellSections" class="d-flex section-row">
+        <sudoku-section *ngFor="let section of row" [matrix]="section" class="section"></sudoku-section>
+    </div>
 </div>
 
 <button mat-button (click)="print()">Console matrix</button>
