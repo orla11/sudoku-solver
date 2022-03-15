@@ -14,6 +14,7 @@ export interface CellContent{
 export class CellComponent implements OnInit {
 
   @Input() content: CellContent = { x: 0, y: 0 };
+  @Input() maxValue: number = 6;
 
   constructor() { }
 

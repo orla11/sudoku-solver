@@ -1,5 +1,5 @@
-<div *ngFor="let row of matrix">
-    <sudoku-cell *ngFor="let cell of row" [content]="cell"></sudoku-cell>
+<div *ngFor="let row of cellMatrix">
+    <sudoku-cell *ngFor="let cell of row" [maxValue]="maxValue" [content]="cell"></sudoku-cell>
 </div>
 
 <button mat-button (click)="print()">Console matrix</button>

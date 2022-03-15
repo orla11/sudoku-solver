@@ -13,9 +13,6 @@ export interface Size{
 })
 export class GridComponent implements OnInit {
 
-  @Input() size: number = 9;
-  @Input() sectionSize: string = "3x3";
-
   private _size: Size = {
     height: 9,
     width: 9
@@ -26,9 +23,25 @@ export class GridComponent implements OnInit {
   }
 
   private _matrix : CellContent[][] = [];
+  private _sections : CellContent[][][][] = [];
 
-  public get matrix(): CellContent[][] {
+  @Input() public size: number = 9;
+  @Input() public sectionSize: string = "3x3";
+
+  public get cellMatrix(): CellContent[][] {
     return this._matrix;
+  }
+
+  public get cellSections(): CellContent[][][][] {
+    return this._sections;
+  }
+
+  public get matrix(): number[][] {
+    return this.numberMatrix();
+  }
+
+  public get maxValue(): number {
+    return this._size.height;
   }
 
   constructor() { }
@@ -40,24 +53,60 @@ export class GridComponent implements OnInit {
     this._size = this.validateInput(inputSize) ? inputSize : this._size;
     this._sectionSize = this.validateInput(inputSectionSize, this._size) ? inputSectionSize : this._sectionSize;
     
-    this._matrix = Array(this._size.height)
+    this._matrix = this.createMatrix(this._size);
+    this._sections = this.createMatrix(
+      {
+        height: this._size.height / this._sectionSize.height, 
+        width: this._size.width / this._sectionSize.width
+      }, 
+      (x,y) => {
+        return this.createMatrix(
+          this._sectionSize, 
+          (_x, _y) => {
+            return this._matrix[_x + x * this._sectionSize.width][_y + y * this._sectionSize.height]
+          }
+        )
+      }
+    )
+    
+    console.log(this.cellSections);
+  }
+
+  private createMatrix(size: Size, map?: (x: number, y: number) => any) : any[][]{
+    let _map = map ? map : (x: number, y: number) => {
+      return {
+        value: undefined,
+        x: x,
+        y: y
+      };
+    };
+
+    return Array(size.width)
       .fill(undefined)
-      .map((row, x) => Array(this._size.width)
+      .map((ignored, x) => Array(size.height)
         .fill(undefined)
-        .map( (value, y) => {
-          return {
-            value: value,
-            x: x,
-            y: y
-          } 
-        })
+        .map( (ignored, y) => _map(x, y))
       );
   }
 
   public print(){
-    console.log(this._matrix)
+    console.log(this.printMatrix(), this.matrix);
+
+    this._sections.forEach( row => row.forEach( section => 
+      console.log(this.printMatrix(section))
+    ) );
   }
-  
+
+  private printMatrix(matrix?: CellContent[][]) :string {
+    const _matrix = this.numberMatrix(matrix);
+    return _matrix.map( row => row.join(' ')).join('\n');
+  }
+
+  private numberMatrix(matrix?: CellContent[][]): number[][]{
+    const _matrix = matrix || this._matrix;
+    return _matrix.map( row => row.map( elem => elem.value || 0) );
+  }
+
   private validateInput(value: Size, container?: Size) : boolean {
     let result = false;
     // Se passo un container verifico che sia contenuto nel container
