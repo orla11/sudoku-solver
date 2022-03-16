@@ -1,3 +1,4 @@
 <mat-form-field class="sudoku-cell" appearance="outline">
-    <input matInput [(ngModel)]="content.value" type="number" [max]="maxValue" [min]="1" class="no-arrow">
+    <!-- <input matInput [(ngModel)]="content.value" type="number" [max]="maxValue" [min]="1" class="no-arrow" (input)="onChange($event)"> -->
+    <input matInput [value]="content.value" type="number" [max]="maxValue" [min]="1" class="no-arrow" (input)="content.value=onChange($event)">
 </mat-form-field>

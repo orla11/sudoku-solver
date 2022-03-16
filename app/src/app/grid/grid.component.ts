@@ -6,6 +6,10 @@ export interface Size{
   width: number
 }
 
+export interface DefaultSize{
+  [size: number] : Size
+}
+
 @Component({
   selector: 'sudoku-grid',
   templateUrl: './grid.component.html',
@@ -13,20 +17,35 @@ export interface Size{
 })
 export class GridComponent implements OnInit {
 
+  private defaultSectionSize: DefaultSize = {
+    6: {
+      width: 3,
+      height: 2
+    },
+    9: {
+      width: 3,
+      height: 3
+    },
+    16: {
+      width: 4,
+      height: 4
+    }
+  }
+
   private _size: Size = {
-    height: 9,
-    width: 9
+    width: 9,
+    height: 9
   };
   private _sectionSize: Size = {
-    height: 3,
-    width: 3
-  }
+    width: 3,
+    height: 3
+  };
 
   private _matrix : CellContent[][] = [];
   private _sections : CellContent[][][][] = [];
 
   @Input() public size: number = 9;
-  @Input() public sectionSize: string = "3x3";
+  @Input() public sectionSize: string | undefined;
 
   public get cellMatrix(): CellContent[][] {
     return this._matrix;
@@ -48,10 +67,10 @@ export class GridComponent implements OnInit {
 
   ngOnInit(): void {
     let inputSize = { height: this.size, width: this.size };
-    let inputSectionSize = this.convertSectionSize(this.sectionSize);
+    let inputSectionSize = this.convertSectionSize(this.size, this.sectionSize);
 
     this._size = this.validateInput(inputSize) ? inputSize : this._size;
-    this._sectionSize = this.validateInput(inputSectionSize, this._size) ? inputSectionSize : this._sectionSize;
+    this._sectionSize = this.validateInput(inputSectionSize, this._size) ? inputSectionSize : this.defaultSectionSize[this._size.width];
     
     this._matrix = this.createMatrix(this._size);
     this._sections = this.createMatrix(
@@ -126,19 +145,19 @@ export class GridComponent implements OnInit {
     return result;
   }
 
-  private convertSectionSize(value?: string) : Size{
+  private convertSectionSize(gridSize: number, value?: string) : Size{
     if (value && new RegExp('^\s*[0-9]{1,2}\s*x\s*[0-9]{1,2}\s*$').test(value)){
       let split = value
         .replace(new RegExp('\s'), '')
         .split(new RegExp('[x,X]'));
       
       return {
-        height: Number(split[0]),
-        width: Number(split[1])
+        width: Number(split[1]),
+        height: Number(split[0])
       }
     }
 
-    return this._sectionSize;
+    return this.defaultSectionSize[gridSize] || this._sectionSize;
   }
 
 }
