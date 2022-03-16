@@ -1,7 +1,7 @@
 
 <div>
-    <div *ngFor="let row of cellSections" class="d-flex section-row">
-        <sudoku-section *ngFor="let section of row" [matrix]="section" class="section"></sudoku-section>
+    <div *ngFor="let row of sections" class="d-flex section-row">
+        <sudoku-section *ngFor="let section of row" [matrix]="section.matrix" class="section"></sudoku-section>
     </div>
 </div>
 

@@ -1,5 +1,5 @@
 <div class="section-border">
     <div *ngFor="let row of matrix" class="d-flex">
-        <sudoku-cell *ngFor="let cell of row" [maxValue]="maxValue" [content]="cell"></sudoku-cell>
+        <sudoku-cell *ngFor="let cell of row" [maxValue]="maxValue" [cell]="cell"></sudoku-cell>
     </div>
 </div>

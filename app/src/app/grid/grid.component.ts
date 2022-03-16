@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { CellContent } from '../cell/cell.component';
+import { Cell } from '../cell/cell.component';
+import { Section } from '../section/section.component';
 
 export interface Size{
   width: number,
@@ -10,12 +11,17 @@ export interface DefaultSize{
   [size: number] : Size
 }
 
+export interface Grid extends Size{
+  matrix: number[][],
+  sections: Section[][]
+}
+
 @Component({
   selector: 'sudoku-grid',
   templateUrl: './grid.component.html',
   styleUrls: ['./grid.component.scss']
 })
-export class GridComponent implements OnInit {
+export class GridComponent implements OnInit, Grid {
 
   private defaultSectionSize: DefaultSize = {
     6: {
@@ -32,35 +38,33 @@ export class GridComponent implements OnInit {
     }
   }
 
-  private _size: Size = {
-    width: 9,
-    height: 9
-  };
   private _sectionSize: Size = {
     width: 3,
     height: 3
   };
 
-  private _matrix : CellContent[][] = [];
-  private _sections : CellContent[][][][] = [];
+  private _width: number = 9;
+  private _height: number = 9;
+  private _matrix : Cell[][] = [];
+  private _sections : Section[][] = [];
 
   @Input() public size: number = 9;
   @Input() public sectionSize: string | undefined;
 
-  public get cellMatrix(): CellContent[][] {
-    return this._matrix;
+  public get width(): number{
+    return this._width;
   }
 
-  public get cellSections(): CellContent[][][][] {
-    return this._sections;
+  public get height(): number{
+    return this._height;
   }
-
+  
   public get matrix(): number[][] {
     return this.numberMatrix();
   }
 
-  public get maxValue(): number {
-    return this._size.height;
+  public get sections(): Section[][] {
+    return this._sections;
   }
 
   constructor() { }
@@ -69,27 +73,38 @@ export class GridComponent implements OnInit {
     let inputSize = { height: this.size, width: this.size };
     let inputSectionSize = this.convertSectionSize(this.size, this.sectionSize);
 
-    this._size = this.validateInput(inputSize) ? inputSize : this._size;
-    this._sectionSize = this.validateInput(inputSectionSize, this._size) ? inputSectionSize : this.defaultSectionSize[this._size.width];
+    if(this.validateInput(inputSize)) {
+      this._width = inputSize.width;
+      this._height = inputSize.height;
+    }
+    this._sectionSize = this.validateInput(inputSectionSize, this) ? inputSectionSize : this.defaultSectionSize[this.width];
     
-    this._matrix = this.createMatrix(this._size);
+    this._matrix = this.createMatrix(this);
     this._sections = this.createMatrix(
       {
-        height: this._size.height / this._sectionSize.height, 
-        width: this._size.width / this._sectionSize.width
+        height: this.height / this._sectionSize.height, 
+        width: this.width / this._sectionSize.width
       }, 
       (x,y) => {
-        return this.createMatrix(
-          this._sectionSize, 
-          (_x, _y) => {
-            return this._matrix[_x + x * this._sectionSize.width][_y + y * this._sectionSize.height]
-          }
-        )
+        const offsetX = x * this._sectionSize.width;
+        const offsetY = y * this._sectionSize.height;
+        return {
+          width: this._sectionSize.width,
+          height: this._sectionSize.height,
+          matrix: this.createMatrix<Cell>(
+            this._sectionSize, 
+            (_x, _y) => {
+              const indexX = _x + offsetX;
+              const indexY = _y + offsetY;
+              return this._matrix[indexY][indexX];
+            }
+          )
+        }
       }
     )
   }
 
-  private createMatrix(size: Size, map?: (x: number, y: number) => any) : any[][]{
+  private createMatrix<T>(size: Size, map?: (x: number, y: number) => any) : T[][]{
     let _map = map ? map : (x: number, y: number) => {
       return {
         value: undefined,
@@ -109,16 +124,16 @@ export class GridComponent implements OnInit {
   public print(){
     console.log(this.printMatrix(), this.matrix);
     this._sections.forEach( row => row.forEach( section => 
-      console.log(this.printMatrix(section))
+      console.log(this.printMatrix(section.matrix))
     ) );
   }
 
-  private printMatrix(matrix?: CellContent[][]) :string {
+  private printMatrix(matrix?: Cell[][]) :string {
     const _matrix = this.numberMatrix(matrix);
     return _matrix.map( row => row.join(' ')).join('\n');
   }
 
-  private numberMatrix(matrix?: CellContent[][]): number[][]{
+  private numberMatrix(matrix?: Cell[][]): number[][]{
     const _matrix = matrix || this._matrix;
     return _matrix.map( row => row.map( elem => elem.value || 0) );
   }
