@@ -2,8 +2,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { CellContent } from '../cell/cell.component';
 
 export interface Size{
-  height: number,
-  width: number
+  width: number,
+  height: number
 }
 
 export interface DefaultSize{
@@ -98,11 +98,11 @@ export class GridComponent implements OnInit {
       };
     };
 
-    return Array(size.width)
+    return Array(size.height)
       .fill(undefined)
-      .map((ignored, x) => Array(size.height)
+      .map((ignored, y) => Array(size.width)
         .fill(undefined)
-        .map( (ignored, y) => _map(x, y))
+        .map( (ignored, x) => _map(x, y))
       );
   }
 
