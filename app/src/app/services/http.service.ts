@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, tap } from 'rxjs/operators';
+import { tap, catchError } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { APP_BASE_HREF } from '@angular/common';
@@ -8,6 +8,12 @@ import { LoadingService } from './loading.service';
 import { LoggerService } from './logger.service';
 import { SnackService } from './snack.service';
 import { Board } from '../interfaces/grid';
+
+export interface HttpRequestConfig{
+    noLoader?: string | true
+    noSnackbar?: boolean
+    noError?: boolean
+}
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +28,7 @@ export class HttpService {
     constructor(private http: HttpClient, private logger: LoggerService, 
         private loadingService: LoadingService, private snackService: SnackService, @Inject(APP_BASE_HREF) public baseHref: string){ 
             const api_url = environment.apiEndpoint || this.defaultApiUrl(baseHref);
-            this._API_URL = api_url.endsWith('/') ? api_url : `${api_url}/`;
+            this._API_URL = api_url.endsWith('/') ? api_url.substring(0, api_url.length - 2) : api_url;
         }
 
     private defaultApiUrl(baseHref: string){
@@ -33,30 +39,44 @@ export class HttpService {
 
     public solveGrid(board: Board){
         let url = `${this.API_URL}/solve`;
-        return this.getPipe(this.http.post<Board>(url,board), url, 'solveGrid');
+        return this.getPipe(this.http.post<Board>(url,board), url, 'solveGrid', {noError: true});
     }
 
-    protected getPipe<T>(obs: Observable<T | HttpErrorResponse>, url: string, message: string, noLoader?: string | true): Observable<T | HttpErrorResponse> {
-		if (noLoader != true)
-            this.loadingService.inc(noLoader);
-        return obs.pipe(
+    protected getPipe<T>(obs: Observable<T>, url: string, message: string, config?: HttpRequestConfig): Observable<T> {
+		if (config?.noLoader != true)
+            this.loadingService.inc(config?.noLoader);
+
+        const _result = obs.pipe(
             tap(() => {
-                if (noLoader != true)
-                    this.loadingService.dec(noLoader);
+                if (config?.noLoader != true)
+                    this.loadingService.dec(config?.noLoader);
             }),
-            catchError(this.handleError(url+' => '+message))
+            catchError(this.handleError<T>(`${url} => ${message}`, config))
         );
+
+        let result = _result;
+        if (config?.noError)
+            result = _result.pipe(
+                catchError(()=>of(undefined as unknown as T))
+            )
+        
+        return result;
 	}
 
-	protected handleError (operation = 'operation') {
-        return (httpError: HttpErrorResponse): Observable<HttpErrorResponse> => {
+    protected handleError<T>(operation = 'operation', config?: HttpRequestConfig) {
+        return (httpError: HttpErrorResponse): Observable<T> => {
             var errorMessage: string = (httpError.error && typeof httpError.error.message == 'string') ? httpError.error.message : ""+httpError.message;
             errorMessage = `(${httpError.status}) ${errorMessage}`;
-            this.loadingService.dec();
-            this.snackService.showSnack(errorMessage);
+
+            if (config?.noLoader != true)
+                this.loadingService.dec(config?.noLoader);
+            if (config?.noSnackbar != true)
+                this.snackService.showSnack(errorMessage);
+            
             this.logger.error(`HANDLE ERROR [${operation}]`);
             this.logger.error(httpError);
-            return of(httpError as HttpErrorResponse);
+
+            throw httpError;
         };
     }
 }
