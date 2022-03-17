@@ -25,3 +25,7 @@ export interface Cell extends Coordinate {
     value?: number
     maxValue?: number
 }
+
+export interface Board{
+    board: number[][]
+}

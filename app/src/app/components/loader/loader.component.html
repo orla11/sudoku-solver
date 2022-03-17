@@ -1,0 +1,19 @@
+<div *ngIf="controller?.showing" [style.font-size]="size+'px'" [style.stroke]="color" [style.background]="background" class="overlay-loading">
+    <div class="loader-container">
+        <div class="center size-200">
+            <mat-progress-spinner [diameter]="size * 4" [strokeWidth]="size * 0.2" mode="indeterminate" color="accent"></mat-progress-spinner>
+        </div>
+        <div class="center size-100">
+            <mat-progress-spinner [diameter]="size * 2" [strokeWidth]="size * 0.4" mode="indeterminate" color="accent"></mat-progress-spinner>
+        </div>
+        <div class="center size-50">
+            <mat-progress-spinner [diameter]="size" [strokeWidth]="size * 0.1" mode="indeterminate" color="accent"></mat-progress-spinner>
+        </div>
+        <div class="center size-125">
+            <mat-progress-spinner [diameter]="size * 2.5" [strokeWidth]="size * 0.06" mode="indeterminate" color="accent"></mat-progress-spinner>
+        </div>
+        <div class="center size-170">
+            <mat-progress-spinner [diameter]="size * 3.4" [strokeWidth]="size / 50" mode="indeterminate" color="accent"></mat-progress-spinner>
+        </div>
+    </div>
+</div>
