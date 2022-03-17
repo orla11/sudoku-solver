@@ -21,7 +21,7 @@ export class LoaderComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    this.controller.forceShow = changes['showing'].currentValue as boolean;
+    this.controller.forceShow = changes['showing']?.currentValue as boolean;
   }
 
   ngOnInit() { }
