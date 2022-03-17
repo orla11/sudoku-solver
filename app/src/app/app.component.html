@@ -1,3 +1,13 @@
 <div class="d-flex justify-content-center">
-    <sudoku-grid [size]="6"></sudoku-grid>
+    <button mat-button (click)="size=6">6x6</button>
+    <button mat-button (click)="size=9">9x9</button>
+    <button mat-button (click)="size=16">16x16</button>
+</div>
+
+<div *ngIf='size' class="d-flex justify-content-center">
+    <sudoku-grid [size]="size" #grid></sudoku-grid>
+</div>
+
+<div class="d-flex justify-content-center">
+    <button mat-button (click)="solve()">Solve</button>
 </div>

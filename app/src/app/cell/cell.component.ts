@@ -1,10 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-
-export interface Cell{
-  x: number,
-  y: number,
-  value?: number
-}
+import { Cell } from '../interfaces/grid';
 
 @Component({
   selector: 'sudoku-cell',
@@ -14,7 +9,7 @@ export interface Cell{
 export class CellComponent implements OnInit, Cell {
 
   @Input() public cell: Cell = { x: 0, y: 0 };
-  @Input() public maxValue: number = 6;
+  @Input() public maxValue?: number;
 
   public get x(): number{
     return this.cell.x; 
@@ -43,7 +38,7 @@ export class CellComponent implements OnInit, Cell {
   }
 
   private validValue(value: number){
-    return value > 0 && value <= this.maxValue;
+    return value > 0 && (!this.maxValue || value <= this.maxValue);
   }
 
 }

@@ -1,10 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Cell } from '../cell/cell.component';
-import { Size } from '../grid/grid.component';
-
-export interface Section extends Size{
-  matrix: Cell[][]
-}
+import { Section, Cell } from '../interfaces/grid';
 
 @Component({
   selector: 'sudoku-section',
@@ -13,20 +8,37 @@ export interface Section extends Size{
 })
 export class SectionComponent implements OnInit, Section {
 
-  @Input() public matrix: Cell[][] = [];
+  @Input() public section: Section = 
+  {
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+    matrix: []
+  };
 
-  public get width(): number{
-    return this.matrix.length;
+  public get matrix(): Cell[][] {
+    return this.section.matrix;
+  }
+
+  public get x() {
+    return this.section.x;
+  }
+
+  public get y() {
+    return this.section.y;
+  }
+
+  public get width(): number {
+    return this.section.width;
   }
   
-  public get height(): number{
-    return this.matrix.length > 0 && this.matrix[0] ? this.matrix[0].length : 0;
+  public get height(): number {
+    return this.section.height;
   }
-
+  
   public get maxValue(): number {
-    return this.matrix.length > 0 && this.matrix[0] ? 
-      this.matrix.length * this.matrix[0].length
-      : 0;
+    return this.width * this.height;
   }
 
   constructor() { }

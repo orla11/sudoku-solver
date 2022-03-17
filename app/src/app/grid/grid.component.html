@@ -1,8 +1,6 @@
 
 <div>
     <div *ngFor="let row of sections" class="d-flex section-row">
-        <sudoku-section *ngFor="let section of row" [matrix]="section.matrix" class="section"></sudoku-section>
+        <sudoku-section *ngFor="let section of row" [section]="section" class="section"></sudoku-section>
     </div>
 </div>
-
-<button mat-button (click)="print()">Console matrix</button>

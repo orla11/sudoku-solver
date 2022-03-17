@@ -1,27 +1,12 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { Cell } from '../cell/cell.component';
-import { Section } from '../section/section.component';
-
-export interface Size{
-  width: number,
-  height: number
-}
-
-export interface DefaultSize{
-  [size: number] : Size
-}
-
-export interface Grid extends Size{
-  matrix: number[][],
-  sections: Section[][]
-}
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { DefaultSize, Grid, Size, Section, Cell, Coordinate } from '../interfaces/grid';
 
 @Component({
   selector: 'sudoku-grid',
   templateUrl: './grid.component.html',
   styleUrls: ['./grid.component.scss']
 })
-export class GridComponent implements OnInit, Grid {
+export class GridComponent implements OnInit, OnChanges, Grid {
 
   private defaultSectionSize: DefaultSize = {
     6: {
@@ -69,6 +54,17 @@ export class GridComponent implements OnInit, Grid {
 
   constructor() { }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    const change = ['size','sectionSize'].some( key => 
+        changes[key] 
+        && !changes[key].firstChange 
+        && changes[key].previousValue != changes[key].currentValue
+      );
+    
+    if(change)
+      this.ngOnInit();
+  }
+
   ngOnInit(): void {
     let inputSize = { height: this.size, width: this.size };
     let inputSectionSize = this.convertSectionSize(this.size, this.sectionSize);
@@ -85,10 +81,12 @@ export class GridComponent implements OnInit, Grid {
         height: this.height / this._sectionSize.height, 
         width: this.width / this._sectionSize.width
       }, 
-      (x,y) => {
+      (x,y) : Section => {
         const offsetX = x * this._sectionSize.width;
         const offsetY = y * this._sectionSize.height;
         return {
+          x: x,
+          y: y,
           width: this._sectionSize.width,
           height: this._sectionSize.height,
           matrix: this.createMatrix<Cell>(
@@ -104,13 +102,12 @@ export class GridComponent implements OnInit, Grid {
     )
   }
 
-  private createMatrix<T>(size: Size, map?: (x: number, y: number) => any) : T[][]{
-    let _map = map ? map : (x: number, y: number) => {
+  private createMatrix<T extends Coordinate>(size: Size, map?: (x: number, y: number) => T) : T[][]{
+    let _map = map ? map : (x: number, y: number) : T => {
       return {
-        value: undefined,
         x: x,
         y: y
-      };
+      } as unknown as T;
     };
 
     return Array(size.height)
@@ -121,19 +118,16 @@ export class GridComponent implements OnInit, Grid {
       );
   }
 
-  public print(){
-    console.log(this.printMatrix(), this.matrix);
-    this._sections.forEach( row => row.forEach( section => 
-      console.log(this.printMatrix(section.matrix))
-    ) );
+  public print() : string {
+    return this.printMatrix();
   }
 
-  private printMatrix(matrix?: Cell[][]) :string {
+  public printMatrix(matrix?: Cell[][]) :string {
     const _matrix = this.numberMatrix(matrix);
     return _matrix.map( row => row.join(' ')).join('\n');
   }
 
-  private numberMatrix(matrix?: Cell[][]): number[][]{
+  public numberMatrix(matrix?: Cell[][]): number[][]{
     const _matrix = matrix || this._matrix;
     return _matrix.map( row => row.map( elem => elem.value || 0) );
   }
