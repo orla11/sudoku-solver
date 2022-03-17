@@ -10,11 +10,12 @@ const solveBoard = async function (board: Number[][]) {
 
 	const solver = spawn("python", [
 		path.join(__dirname, "../scripts/solver.py"),
+		JSON.stringify(board)
 	]);
 
 	solver.stdout.on("data", function (data) {
 		console.log("data: ", data.toString());
-		resolve(JSON.parse(data.toString()));
+		resolve(JSON.parse(data.toString())); 
 	});
 
 	solver.stderr.on("error", (error) => {
