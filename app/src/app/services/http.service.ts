@@ -38,7 +38,7 @@ export class HttpService {
     }
 
     public solveGrid(board: Board){
-        let url = `${this.API_URL}/solve`;
+        let url = `${this.API_URL}/solver`;
         return this.getPipe(this.http.post<Board>(url,board), url, 'solveGrid', {noError: true});
     }
 
