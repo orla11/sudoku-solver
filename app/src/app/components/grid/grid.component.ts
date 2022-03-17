@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { DefaultSize, Grid, Size, Section, Cell, Coordinate } from '../interfaces/grid';
+import { DefaultSize, Grid, Size, Section, Cell, Coordinate } from '../../interfaces/grid';
 
 @Component({
   selector: 'sudoku-grid',
@@ -46,6 +46,10 @@ export class GridComponent implements OnInit, OnChanges, Grid {
   
   public get matrix(): number[][] {
     return this.numberMatrix();
+  }
+
+  public set matrix(matrix: number[][]) {
+    this.updateMatrix(matrix);
   }
 
   public get sections(): Section[][] {
@@ -167,6 +171,18 @@ export class GridComponent implements OnInit, OnChanges, Grid {
     }
 
     return this.defaultSectionSize[gridSize] || this._sectionSize;
+  }
+
+  private updateMatrix(matrix: number[][]) {
+    if (!this._matrix) return;
+    
+    const height = matrix ? matrix.length : 0;
+    const width = matrix && matrix.length > 0 && matrix[0] ? matrix[0].length : 0;
+
+    if (this.height != height || this.width != width) return;
+
+    if (this.matrix.every( (row,y) => row.every( (elem,x) => this.matrix[y][x] === elem )))
+      this._matrix.forEach( (row,y) => row.forEach( (cell,x) => cell.value = matrix[y][x] ))
   }
 
 }

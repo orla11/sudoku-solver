@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Section, Cell } from '../interfaces/grid';
+import { Section, Cell } from '../../interfaces/grid';
 
 @Component({
   selector: 'sudoku-section',

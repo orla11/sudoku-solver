@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { GridComponent } from './grid/grid.component';
+import { GridComponent } from './components/grid/grid.component';
 
 @Component({
   selector: 'app-root',
