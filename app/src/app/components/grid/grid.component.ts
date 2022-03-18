@@ -33,6 +33,7 @@ export class GridComponent implements OnInit, OnChanges, Grid {
   private _matrix : Cell[][] = [];
   private _sections : Section[][] = [];
 
+  @Input() public cellSize: number = 30;
   @Input() public size: number = 9;
   @Input() public sectionSize: string | undefined;
 

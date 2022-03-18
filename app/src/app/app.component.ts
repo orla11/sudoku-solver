@@ -15,7 +15,6 @@ import { SettingsService } from './services/settings.service';
 export class AppComponent {
   
   @ViewChild(GridComponent, { static: false }) private _grid?: GridComponent;
-  private static readonly GROUP: string = 'history';
 
   public size?: number;
   public history?: BoardHistory;

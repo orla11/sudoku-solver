@@ -1,5 +1,5 @@
 
-<div>
+<div [style.font-size]="cellSize + 'px'">
     <div *ngFor="let row of sections" class="d-flex section-row">
         <sudoku-section *ngFor="let section of row" [section]="section" class="section"></sudoku-section>
     </div>

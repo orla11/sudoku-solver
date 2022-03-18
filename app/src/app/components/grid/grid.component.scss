@@ -1,10 +1,13 @@
+$border-inset: calc(-1/15 * 1em);
+$border-radius: calc(1/5 * 1em);
+
 .section-row {
     width: fit-content !important;
-    margin-bottom: -2px;
+    margin-bottom: $border-inset;
     background: black;
 
     .section{
-        margin-left: -2px;
+        margin-left: $border-inset;
     }
 
     .section:first-child{
@@ -13,9 +16,9 @@
 }
 
 .section-row:first-child {
-    border-radius: 6px 6px 0 0;
+    border-radius: $border-radius $border-radius 0 0;
 }
 
 .section-row:last-child {
-    border-radius: 0 0 6px 6px;
+    border-radius: 0 0 $border-radius $border-radius;
 }

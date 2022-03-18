@@ -1,19 +1,22 @@
+$cell-size: calc(5/3 * 1em);
+$border-radius: calc((1/5 * 1em) + 1px);
+
 .sudoku-cell{
-    width: 50px;
-    height: 50px;
+    width: $cell-size;
+    height: $cell-size;
 
     ::ng-deep .mat-form-field-wrapper{
         margin-bottom: 0;
         margin-top: 0;
         padding-bottom: 0;
-        border-radius: 6px;
+        border-radius: $border-radius;
         background: white;
-        height: 50px;
+        height: $cell-size;
     }
 
     ::ng-deep .mat-form-field-flex{
         margin-top: 0;
-        height: 50px;
+        height: $cell-size;
         padding: 0;
     }
 
@@ -24,7 +27,7 @@
     ::ng-deep .mat-form-field-infix{
         padding: 0;
         border-top: 0;
-        height: 50px;
+        height: $cell-size;
         display: flex;
     }
 
@@ -34,7 +37,6 @@
     }
 
     input {
-        font-size: 34px;
         text-align: center;
         margin-top: 1px;
     }
