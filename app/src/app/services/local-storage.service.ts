@@ -13,10 +13,10 @@ export class LocalStorageService {
 
   constructor() { }
 
-  public getStoredObj<T>(group: string, key: string) :T | undefined{
+  public getStoredObj<T>(key: string, group?: string) :T | undefined{
     if (!key) return;
     
-    const storedElem = this.getItem(group, key);
+    const storedElem = this.getItem(key, group);
     if (
         storedElem
         && 
@@ -30,26 +30,36 @@ export class LocalStorageService {
     return;
   }
 
-  public getExpiringTime(group: string, key: string) :number | undefined {
+  public getExpiringTime(key: string, group?: string) :number | undefined {
     if (!key) return;
 
-    const storedElem = this.getItem(group, key);
+    const storedElem = this.getItem(key, group);
     if (storedElem)
       return storedElem.expireTime;
 
     return;
   }
 
-  public removeStoredObj(group: string, key: string){
+  public removeStoredObj(key: string, group?: string){
     if (!key) return;
-    let compositeKey = (group) ? group+'_'+key : key;
+
+    const compositeKey = this.getCompositeKey(key, group);
     localStorage.removeItem(compositeKey);
   }
 
-  public setStoredObj(group: string, key: string, obj: any, expiringTime?: number){
+  public setStoredObjWithGroup(group: string, key: string, obj: any, expiringTime?: number){
+    this._setStoredObj(key, obj, expiringTime, group);
+  }
+
+  public setStoredObj(key: string, obj: any, expiringTime?: number){
+    this._setStoredObj(key, obj, expiringTime);
+  }
+
+  private _setStoredObj(key: string, obj: any, expiringTime?: number, group?: string){
     if (!key) return;
-    let compositeKey = (group) ? group+'_'+key : key;
-    let expiringElem: ExpiringStorageElement = {
+
+    const compositeKey = this.getCompositeKey(key, group);
+    const expiringElem: ExpiringStorageElement = {
       expireDate: (expiringTime) ? new Date(expiringTime) : undefined,
       expireTime: expiringTime,
       obj: obj
@@ -57,8 +67,12 @@ export class LocalStorageService {
     localStorage.setItem(compositeKey, JSON.stringify(expiringElem));
   }
 
-  private getItem(group: string, key: string): ExpiringStorageElement | undefined {
-    const compositeKey = (group) ? group+'_'+key : key;
+  private getCompositeKey(key: string, group?: string){
+    return (group) ? group+'_'+key : key;
+  }
+
+  private getItem(key: string, group?: string): ExpiringStorageElement | undefined {
+    const compositeKey = this.getCompositeKey(key, group);
     const item = localStorage.getItem(compositeKey);
     if (item)
       return JSON.parse(item);

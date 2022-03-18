@@ -106,6 +106,28 @@ export class GridComponent implements OnInit, OnChanges, Grid {
     )
   }
 
+  public print() : string {
+    return this.printMatrix();
+  }
+
+  public printMatrix(matrix?: Cell[][]) :string {
+    const _matrix = this.numberMatrix(matrix);
+    return _matrix.map( row => row.join(' ')).join('\n');
+  }
+
+  public numberMatrix(matrix?: Cell[][]): number[][]{
+    const _matrix = matrix || this._matrix;
+    return _matrix.map( row => row.map( elem => elem.value || 0) );
+  }
+
+  public updateCell(input: Cell){
+    const found = ([] as Cell[]).concat(... this._matrix)
+      .find( cell => cell.x === input.x && cell.y === input.y);
+    
+    if (found)
+      found.value = input.value;
+  }
+
   private createMatrix<T extends Coordinate>(size: Size, map?: (x: number, y: number) => T) : T[][]{
     let _map = map ? map : (x: number, y: number) : T => {
       return {
@@ -120,20 +142,6 @@ export class GridComponent implements OnInit, OnChanges, Grid {
         .fill(undefined)
         .map( (ignored, x) => _map(x, y))
       );
-  }
-
-  public print() : string {
-    return this.printMatrix();
-  }
-
-  public printMatrix(matrix?: Cell[][]) :string {
-    const _matrix = this.numberMatrix(matrix);
-    return _matrix.map( row => row.join(' ')).join('\n');
-  }
-
-  public numberMatrix(matrix?: Cell[][]): number[][]{
-    const _matrix = matrix || this._matrix;
-    return _matrix.map( row => row.map( elem => elem.value || 0) );
   }
 
   private validateInput(value: Size, container?: Size) : boolean {
@@ -184,5 +192,4 @@ export class GridComponent implements OnInit, OnChanges, Grid {
     if (this.matrix.every( (row,y) => row.every( (elem,x) => this.matrix[y][x] === elem )))
       this._matrix.forEach( (row,y) => row.forEach( (cell,x) => cell.value = matrix[y][x] ))
   }
-
 }
