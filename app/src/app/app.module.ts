@@ -16,6 +16,8 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { APP_BASE_HREF, PlatformLocation } from '@angular/common';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { BoardHistoryComponent } from './components/board-history/board-history.component';
+import { HistoryListComponent } from './components/history-list/history-list.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +25,9 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     GridComponent,
     CellComponent,
     SectionComponent,
-    LoaderComponent
+    LoaderComponent,
+    BoardHistoryComponent,
+    HistoryListComponent
   ],
   imports: [
     BrowserModule,

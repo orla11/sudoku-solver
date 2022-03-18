@@ -1,0 +1,5 @@
+<div *ngIf='boardHistory' class="p-2 d-flex justify-content-center">
+    <sudoku-grid [cellSize]="15" [model]="boardHistory.board"></sudoku-grid>
+    <div class="p-1"></div>
+    <sudoku-grid [cellSize]="15" [model]="boardHistory.solution"></sudoku-grid>
+</div>

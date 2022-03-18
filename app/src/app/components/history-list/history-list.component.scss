@@ -1,0 +1,10 @@
+.list{
+    overflow-y: hidden;
+    overflow-x: auto;
+    border: 2px solid black;
+    border-radius: 5px;
+
+    ::ng-deep .mat-input-element:disabled {
+        color: currentColor;
+    }
+}

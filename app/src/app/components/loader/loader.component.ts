@@ -16,7 +16,7 @@ export class LoaderComponent implements OnInit, OnDestroy, OnChanges {
   @Input() background: string = 'rgba(0, 0, 0, 0.5)';
   @Input('show') showing: boolean = false;
 
-  constructor(public loadingService: LoadingService) {
+  constructor(private loadingService: LoadingService) {
     this.controller = this.loadingService.registerController(this.level);
   }
 

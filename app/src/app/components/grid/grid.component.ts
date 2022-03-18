@@ -36,6 +36,7 @@ export class GridComponent implements OnInit, OnChanges, Grid {
   @Input() public cellSize: number = 30;
   @Input() public size: number = 9;
   @Input() public sectionSize: string | undefined;
+  @Input() public model: number[][] | undefined;
 
   public get width(): number{
     return this._width;
@@ -60,17 +61,50 @@ export class GridComponent implements OnInit, OnChanges, Grid {
   constructor() { }
 
   ngOnChanges(changes: SimpleChanges): void {
-    const change = ['size','sectionSize'].some( key => 
+    const changeSize = ['size','sectionSize'].some( key => 
         changes[key] 
         && !changes[key].firstChange 
         && changes[key].previousValue != changes[key].currentValue
       );
+
+    const changeModel = changes['model'] 
+      && changes['model'].currentValue !== undefined 
+      && changes['model'].currentValue !== null;
     
-    if(change)
-      this.ngOnInit();
+    if (changeModel && this.initInputModel())
+      return;
+
+    if (changeSize)
+      this.initInputSize();
   }
 
   ngOnInit(): void {
+    if (this.initInputModel())
+      return;
+
+    this.initInputSize();
+  }
+
+  private initInputModel() : boolean {
+    const height = this.model ? this.model.length : 0;
+    const width = this.model && height ? this.model[0].length : 0;
+    if (!height || !width || height != width)
+      return false;
+    
+    let inputSize = { height: height, width: width };
+    if(!this.validateInput(inputSize)) 
+      return false;
+    
+    this._width = inputSize.width;
+    this._height = inputSize.height;
+    this._sectionSize = this.defaultSectionSize[this.width];
+
+    this.initCells(this.model);
+
+    return true;
+  }
+
+  private initInputSize() {
     let inputSize = { height: this.size, width: this.size };
     let inputSectionSize = this.convertSectionSize(this.size, this.sectionSize);
 
@@ -80,7 +114,19 @@ export class GridComponent implements OnInit, OnChanges, Grid {
     }
     this._sectionSize = this.validateInput(inputSectionSize, this) ? inputSectionSize : this.defaultSectionSize[this.width];
     
-    this._matrix = this.createMatrix(this);
+    this.initCells();
+  }
+
+  private initCells(matrix?: number[][]) {
+    this._matrix = this.createMatrix(
+      this,
+      (x,y): Cell => {
+        return {
+          x: x,
+          y: y,
+          value: matrix ? matrix[y][x] : undefined
+        }
+      });
     this._sections = this.createMatrix(
       {
         height: this.height / this._sectionSize.height, 
@@ -104,7 +150,7 @@ export class GridComponent implements OnInit, OnChanges, Grid {
           )
         }
       }
-    )
+    );
   }
 
   public print() : string {
