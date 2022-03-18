@@ -1,5 +1,6 @@
 $border-inset: calc(-1/15 * 1em);
-$border-radius: calc(1/5 * 1em);
+$border-radius-internal: calc(1/5 * 1em);
+$border-radius: calc($border-radius-internal - $border-inset);
 
 .section-row {
     width: fit-content !important;

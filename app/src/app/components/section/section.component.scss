@@ -1,5 +1,6 @@
 $border-width: calc(1/15 * 1em);
-$border-radius: calc((1/5 * 1em) + 1px);
+$border-radius-internal: calc(1/5 * 1em);
+$border-radius: calc($border-radius-internal + $border-width);
 
 .section-border{
     border: $border-width solid black;

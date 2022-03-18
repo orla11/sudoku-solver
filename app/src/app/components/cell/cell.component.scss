@@ -1,5 +1,5 @@
 $cell-size: calc(5/3 * 1em);
-$border-radius: calc((1/5 * 1em) + 1px);
+$border-radius: calc(1/5 * 1em);
 
 .sudoku-cell{
     width: $cell-size;
@@ -24,14 +24,23 @@ $border-radius: calc((1/5 * 1em) + 1px);
         top: 0;
     }
 
-    ::ng-deep .mat-form-field-infix{
+    ::ng-deep .mat-form-field-outline-start{
+        min-width: $border-radius;
+        border-radius: $border-radius 0 0 $border-radius;
+    }
+
+    ::ng-deep .mat-form-field-outline-end{
+        border-radius: 0 $border-radius $border-radius 0;
+    }
+
+    ::ng-deep .mat-form-field-infix {
         padding: 0;
         border-top: 0;
         height: $cell-size;
         display: flex;
     }
 
-    ::ng-deep .mat-form-field-label-wrapper{
+    ::ng-deep .mat-form-field-label-wrapper {
         top: 0;
         padding-top: 0;
     }
