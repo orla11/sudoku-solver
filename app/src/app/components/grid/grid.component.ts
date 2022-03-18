@@ -189,7 +189,13 @@ export class GridComponent implements OnInit, OnChanges, Grid {
 
     if (this.height != height || this.width != width) return;
 
-    if (this.matrix.every( (row,y) => row.every( (elem,x) => this.matrix[y][x] === elem )))
-      this._matrix.forEach( (row,y) => row.forEach( (cell,x) => cell.value = matrix[y][x] ))
+    if (this._matrix
+      .every(row => 
+        row
+          .filter(cell => cell.value)
+          .every(cell => cell.value === matrix[cell.y][cell.x])
+        )
+      )
+      this._matrix.forEach( row => row.forEach( cell => cell.value = matrix[cell.y][cell.x] ))
   }
 }

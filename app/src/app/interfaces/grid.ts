@@ -29,9 +29,3 @@ export interface Cell extends Coordinate {
 export interface Board{
     board: number[][]
 }
-
-export interface BoardHistory{
-    step: number
-    start: Cell[]
-    hints: Cell[]
-}
