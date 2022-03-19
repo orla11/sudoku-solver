@@ -1,9 +1,9 @@
 <loader background="rgba(0, 0, 0, 0.2)"></loader>
 
 <div class="d-flex justify-content-center">
-    <button mat-button (click)="size=6">6x6</button>
-    <button mat-button (click)="size=9">9x9</button>
-    <button mat-button (click)="size=16">16x16</button>
+    <button mat-button (click)="updateSize(6)">6x6</button>
+    <button mat-button (click)="updateSize(9)">9x9</button>
+    <button mat-button (click)="updateSize(16)">16x16</button>
 </div>
 
 <div *ngIf='size' class="d-flex justify-content-center">
@@ -12,6 +12,7 @@
 
 <div class="d-flex justify-content-center">
     <button mat-button (click)="solve()">Solve</button>
+    <button mat-button (click)="hint()">Hint</button>
 </div>
 
 <div class="d-flex justify-content-center">

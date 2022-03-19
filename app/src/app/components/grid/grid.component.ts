@@ -124,9 +124,10 @@ export class GridComponent implements OnInit, OnChanges, Grid {
         return {
           x: x,
           y: y,
-          value: matrix ? matrix[y][x] : undefined
+          value: matrix && matrix[y][x] ? matrix[y][x] : undefined
         }
       });
+    
     this._sections = this.createMatrix(
       {
         height: this.height / this._sectionSize.height, 
@@ -167,7 +168,9 @@ export class GridComponent implements OnInit, OnChanges, Grid {
     return _matrix.map( row => row.map( elem => elem.value || 0) );
   }
 
-  public updateCell(input: Cell){
+  public updateCell(input?: Cell){
+    if (!input) return;
+
     const found = ([] as Cell[]).concat(... this._matrix)
       .find( cell => cell.x === input.x && cell.y === input.y);
     

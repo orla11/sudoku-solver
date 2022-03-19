@@ -17,53 +17,91 @@ export class AppComponent {
   @ViewChild(GridComponent, { static: false }) private _grid?: GridComponent;
 
   public size?: number;
-  public history?: BoardHistory;
+  private history?: BoardHistory;
+  private historyId?: number;
 
   constructor(private httpService: HttpService, private settingsService: SettingsService
-    , private logger: LoggerService) { }
+    ,private logger: LoggerService) { }
 
-  public async solve(){
-    this.logger.info(this._grid?.print(), this._grid?.matrix);
-
-    if (!this._grid || !this._grid.matrix) return;
-
-    const matrix = this._grid.matrix;
-    const board: Board = await lastValueFrom(this.httpService.solveGrid({board: matrix}));
-    if (!board) return;
-
-    this.history = this.createHistory(board.board, board.board);
-    this._grid.matrix = board.board;
+  public updateSize(value: number){
+    this.size = value;
+    this.history = undefined;
+    this.historyId = undefined;
   }
 
-  private createHistory(board: number[][], solution: number[][]) : BoardHistory{
+  public async solve(){
+    let solution: Board = await this.findSolution();
+    
+    if (!solution || !this._grid) return;
+
+    this.history = this.createHistory(solution.board, solution.board, this.historyId);
+    this._grid.matrix = solution.board;
+  }
+
+  public async hint() {
+    let solution: Board = await this.findSolution();
+
+    if (!solution || !this._grid) return;
+
+    const hint = this.findHint(this._grid.matrix, solution.board);
+    this._grid.updateCell(hint);
+
+    this.history = this.createHistory(this._grid.matrix, solution.board, this.historyId);
+  }
+
+  private async findSolution() : Promise<Board> {
+    let solution: Board;
+    if (!this.history || !this.history.solution || this.historyId === undefined){
+      solution = await this.solveBoard();
+    }
+    else
+      solution = { board: this.history.solution };
+    
+    return solution;
+  }
+
+  private async solveBoard(){
+    this.logger.info(this._grid?.print());
+
+    if (!this._grid || !this._grid.matrix) 
+      return {
+        board: []
+      };
+
+    const matrix = this._grid.matrix;
+    return await lastValueFrom(this.httpService.solveGrid({board: matrix}));
+  }
+
+  private createHistory(board: number[][], solution: number[][], id?: number) : BoardHistory{
     const history: BoardHistory = {
       board: board,
       solution: solution
     }
 
-    this.settingsService.saveHistory(history);
+    this.historyId = this.settingsService.saveHistory(history, id);
 
     return history;
   }
 
-  private extractHint(input: Cell[][]) : Cell | undefined {
-    const matrix : Cell[][] = JSON.parse(JSON.stringify(
-      input.filter( row => row.filter( cell => cell.value ).length > 0 )
-    ));
+  private findHint(board: number[][], solution: number[][]) : Cell | undefined {
+    const noSolutionCell : Cell[] = 
+      ([] as Cell[]).concat(... 
+        board.map((row,y) => row.map((value,x) => {return {x: x, y: y, value: value}}))
+      )
+      .filter(
+        cell => !cell.value
+      );
 
-    if (matrix.length == 0)
+    if (noSolutionCell.length == 0)
       return;
 
-    const y = Math.floor(Math.random() * matrix.length);
+    const random = Math.floor(Math.random() * noSolutionCell.length);
+    const cellHint = noSolutionCell[random];
 
-    if (!matrix[y] || matrix[y].length == 0)
-      return;
-
-    const x = Math.floor(Math.random() * matrix[y].length);
-
-    if (matrix[y][x] && matrix[y][x].value)
-      return matrix[y][x];
-    else
-      return;
+    return {
+      x: cellHint.x,
+      y: cellHint.y,
+      value: solution[cellHint.y][cellHint.x]
+    }
   }
 }
