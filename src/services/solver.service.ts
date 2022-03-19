@@ -1,5 +1,6 @@
 import { spawn } from "child_process";
 import path from "path";
+import { python } from "../app";
 
 const solveBoard = async function (board: Number[][]) {
 	let resolve: Function, reject: Function;
@@ -8,7 +9,7 @@ const solveBoard = async function (board: Number[][]) {
 		reject = _reject;
 	});
 
-	const solver = spawn("python", [
+	const solver = spawn(python, [
 		path.join(__dirname, "../scripts/solver.py"),
 		JSON.stringify(board)
 	]);

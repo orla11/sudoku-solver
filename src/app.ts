@@ -1,9 +1,25 @@
 import express from "express";
+import yargs from "yargs";
+import cors from "cors";
 import config from "./config/config";
 //import connectDB from "./db/connect";
 import errorHandlerMiddleware from "./middlewares/errorHandler";
 import notFoundMiddleware from "./middlewares/notFound";
 import solverRouter from "./routes/solver.route";
+
+const argv = yargs
+	.option('cors', {
+		alias: 'c',
+		description: 'Allow CORS',
+		type: 'boolean'
+	})
+	.option('python', {
+		alias: 'p',
+		description: 'Python interpreter',
+		type: 'string'
+	})
+	.help()
+	.alias('help', 'h').argv;
 
 // import SolverService from "./services/solver.service";
 // SolverService.solveBoard(
@@ -24,6 +40,14 @@ import "express-async-errors";
 
 const app: express.Application = express();
 const port: any = config.server.port;
+
+export const python: string = argv.python || 'python';
+console.log(`Python interpreter: ${python}`)
+
+if(argv.cors){
+	console.log('Allowing CORS...');
+	app.use(cors());
+}
 
 app.use(express.json());
 

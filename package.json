@@ -4,7 +4,8 @@
 	"description": "simple sudoku solver using vuejs, nodejs, typescript, python and docker",
 	"main": "src/app.ts",
 	"scripts": {
-		"dev": "nodemon src/app.ts",
+		"dev": "nodemon src/app.ts --cors=true",
+		"dev:python3": "nodemon src/app.ts --cors=true --python=python3",
 		"build": "npx tsc",
 		"test": "jest"
 	},
@@ -19,11 +20,14 @@
 	"author": "0rlaDev",
 	"license": "ISC",
 	"dependencies": {
+		"cors": "^2.8.5",
 		"dotenv": "^16.0.0",
 		"express": "^4.17.3",
-		"express-async-errors": "^3.1.1"
+		"express-async-errors": "^3.1.1",
+		"yargs": "^17.3.1"
 	},
 	"devDependencies": {
+		"@types/cors": "^2.8.12",
 		"@types/express": "^4.17.13",
 		"@types/jest": "^27.4.1",
 		"jest": "^27.5.1",
