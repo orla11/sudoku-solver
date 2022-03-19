@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiEndpoint: 'http://localhost/sudoku/api'
+  apiEndpoint: 'http://localhost:3131/api/v1'
 };
 
 /*
